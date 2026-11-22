@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VenueVista | Venue Booking & Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="#" onclick="showPage('home'); return false;">
+      <span class="brand-mark">V</span> Venue<span>Vista</span>
+    </a>
+
+    <nav>
+      <button class="nav-link active" data-page="home" onclick="showPage('home')">Home</button>
+      <button class="nav-link" data-page="venues" onclick="showPage('venues')">Explore Venues</button>
+      <button class="nav-link" data-page="bookings" onclick="showPage('bookings')">
+        My Bookings <span id="bookingCount" class="count">0</span>
+      </button>
+      <button class="nav-link" data-page="admin" onclick="showPage('admin')">Manage Venues</button>
+    </nav>
+
+    <button class="profile-btn" onclick="showPage('bookings')">My Account ↗️</button>
+  </header>
+
+  <main>
+    <!-- HOME PAGE -->
+    <section id="homePage" class="page active-page">
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">MAKE EVERY MOMENT COUNT</p>
+          <h1>Find the perfect<br><span>place for your event.</span></h1>
+          <p class="hero-copy">
+            Discover, compare and book beautiful venues for weddings,
+            meetings, parties and every special occasion.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showPage('venues')">
+              Explore venues →
+            </button>
+            <button class="btn btn-outline" onclick="showPage('bookings')">
+              View my bookings
+            </button>
+          </div>
+
+          <div class="hero-stats">
+            <div><strong>12+</strong><small>Curated venues</small></div>
+            <div><strong>4.8/5</strong><small>Guest experience</small></div>
+            <div><strong>Easy</strong><small>Booking process</small></div>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <div class="hero-photo photo-main">
+            <div class="photo-label">Your event, your way</div>
+          </div>
+          <div class="floating-card">
+            <span class="sparkle">✦</span>
+            <div>
+              <strong>Plan with ease</strong>
+              <small>From search to confirmation</small>
+            </div>
+          </div>
+          <div class="hero-orb"></div>
+        </div>
+      </section>
+
+      <section class="section-wrap">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">START PLANNING</p>
+            <h2>What are you celebrating?</h2>
+          </div>
+          <button class="text-btn" onclick="showPage('venues')">View all venues →</button>
+        </div>
+
+        <div class="category-grid">
+          <button class="category-card" onclick="quickCategory('Wedding')">
+            <span>💍</span><strong>Wedding</strong>
+            <small>Make it unforgettable</small>
+          </button>
+          <button class="category-card" onclick="quickCategory('Corporate')">
+            <span>💼</span><strong>Corporate</strong>
+            <small>Meet, connect, create</small>
+          </button>
+          <button class="category-card" onclick="quickCategory('Birthday')">
+            <span>🎂</span><strong>Birthday</strong>
+            <small>Celebrate your day</small>
+          </button>
+          <button class="category-card" onclick="quickCategory('Party')">
+            <span>🎉</span><strong>Party & Social</strong>
+            <small>Bring everyone together</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="section-wrap featured-wrap">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">HANDPICKED FOR YOU</p>
+            <h2>Popular venues</h2>
+          </div>
+          <button class="text-btn" onclick="showPage('venues')">Explore more →</button>
+        </div>
+        <div id="featuredGrid" class="venue-grid"></div>
+      </section>
+    </section>
+
+    <!-- EXPLORE VENUES PAGE -->
+    <section id="venuesPage" class="page section-wrap">
+      <div class="page-heading">
+        <p class="eyebrow">FIND YOUR SPACE</p>
+        <h1>Explore venues</h1>
+        <p>Choose a venue that fits your event, guest list and budget.</p>
+      </div>
+
+      <div class="filter-bar">
+        <input id="searchInput" type="search"
+          placeholder="Search by venue or location..."
+          oninput="renderVenues()">
+
+        <select id="categoryFilter" onchange="renderVenues()">
+          <option value="">All event types</option>
+          <option>Wedding</option>
+          <option>Corporate</option>
+          <option>Birthday</option>
+          <option>Party</option>
+        </select>
+
+        <select id="capacityFilter" onchange="renderVenues()">
+          <option value="">Any capacity</option>
+          <option value="100">100+ guests</option>
+          <option value="300">300+ guests</option>
+          <option value="500">500+ guests</option>
+        </select>
+
+        <select id="sortFilter" onchange="renderVenues()">
+          <option value="recommended">Recommended</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+        </select>
+      </div>
+
+      <div id="venueGrid" class="venue-grid"></div>
+      <p id="emptyVenues" class="empty-state hidden">
+        No venues match your search. Try changing the filters.
+      </p>
+    </section>
+
+    <!-- MY BOOKINGS PAGE -->
+    <section id="bookingsPage" class="page section-wrap">
+      <div class="page-heading">
+        <p class="eyebrow">YOUR EVENT PLANS</p>
+        <h1>My bookings</h1>
+        <p>Review your requests and keep track of your event details.</p>
+      </div>
+      <div id="bookingList"></div>
+    </section>
+
+    <!-- ADMIN PAGE -->
+    <section id="adminPage" class="page section-wrap">
+      <div class="page-heading">
+        <p class="eyebrow">ADMINISTRATION</p>
+        <h1>Manage venues</h1>
+        <p>Add a venue to the catalogue. New entries are saved in this browser.</p>
+      </div>
+
+      <div class="admin-layout">
+        <form id="venueForm" class="panel form-panel">
+          <h2>Add a new venue</h2>
+
+          <label>
+            Venue name
+            <input name="name" required placeholder="e.g. The Grand Orchid">
+          </label>
+
+          <label>
+            Location
+            <input name="location" required placeholder="e.g. Jalandhar, Punjab">
+          </label>
+
+          <div class="two-col">
+            <label>
+              Price per event (₹)
+              <input name="price" type="number" min="1" required placeholder="25000">
+            </label>
+
+            <label>
+              Guest capacity
+              <input name="capacity" type="number" min="1" required placeholder="300">
+            </label>
+          </div>
+
+          <label>
+            Suitable for
+            <select name="category" required>
+              <option value="">Select category</option>
+              <option>Wedding</option>
+              <option>Corporate</option>
+              <option>Birthday</option>
+              <option>Party</option>
+            </select>
+          </label>
+
+          <label>
+            Image URL (optional)
+            <input name="image" type="url" placeholder="https://...">
+          </label>
+
+          <label>
+            Short description
+            <textarea name="description" rows="3" required
+              placeholder="Describe the venue and its facilities..."></textarea>
+          </label>
+
+          <button class="btn btn-primary full-btn" type="submit">
+            Add venue +
+          </button>
+        </form>
+
+        <div class="panel admin-note">
+          <span class="note-icon">✦</span>
+          <h2>Venue management</h2>
+          <p>
+            Use this section to add venues to the catalogue.
+            You can remove custom venues from the list below.
+          </p>
+          <div id="adminVenueList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <a class="brand footer-brand" href="#" onclick="showPage('home');return false;">
+      <span class="brand-mark">V</span> Venue<span>Vista</span>
+    </a>
+    <p>Find a place. Create a memory.</p>
+    <small>Academic project demo · HTML, CSS & JavaScript</small>
+  </footer>
+
+  <!-- BOOKING POPUP -->
+  <div id="bookingModal" class="modal hidden"
+       role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+
+      <p class="eyebrow">RESERVATION REQUEST</p>
+      <h2 id="modalTitle">Book this venue</h2>
+      <div id="modalVenueInfo" class="modal-venue-info"></div>
+
+      <form id="bookingForm">
+        <input type="hidden" name="venueId">
+
+        <label>
+          Your full name
+          <input name="customer" required placeholder="Enter your name">
+        </label>
+
+        <div class="two-col">
+          <label>
+            Email address
+            <input name="email" type="email" required placeholder="you@example.com">
+          </label>
+
+          <label>
+            Phone number
+            <input name="phone" type="tel"
+              pattern="[0-9+() -]{8,16}" required placeholder="Mobile number">
+          </label>
+        </div>
+
+        <div class="two-col">
+          <label>
+            Event date
+            <input name="date" type="date" required>
+          </label>
+
+          <label>
+            Number of guests
+            <input name="guests" type="number" min="1" required placeholder="e.g. 120">
+          </label>
+        </div>
+
+        <label>
+          Event type
+          <select name="eventType" required>
+            <option value="">Choose event type</option>
+            <option>Wedding</option>
+            <option>Corporate</option>
+            <option>Birthday</option>
+            <option>Party</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>
+          Special requirements
+          <textarea name="requirements" rows="2"
+            placeholder="Decoration, catering, seating, etc."></textarea>
+        </label>
+
+        <div class="price-summary">
+          <span>Estimated venue price</span>
+          <strong id="modalPrice">₹0</strong>
+        </div>
+
+        <button class="btn btn-primary full-btn" type="submit">
+          Submit booking request →
+        </button>
+
+        <small class="form-hint">
+          Demo only: this creates a local booking request, not a real payment
+          or confirmed reservation.
+        </small>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
