@@ -674,6 +674,20 @@ footer small {
   font-size: 10px;
 }
 
+.download-btn {
+  background: var(--mint);
+  color: #17271f;
+  border-radius: 6px;
+  padding: 11px 15px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.download-btn:hover {
+  background: #d7e9dc;
+}
+
 .footer-brand {
   color: white;
   font-size: 18px;
